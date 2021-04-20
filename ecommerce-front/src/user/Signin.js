@@ -70,7 +70,7 @@ const Signin = () => {
             }
         }
         if(isAuthenticated()){
-            return <Redirect to="/"></Redirect>
+            return <Redirect to="/"/>
         }
     }
     return (
