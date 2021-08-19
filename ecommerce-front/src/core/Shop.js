@@ -115,7 +115,9 @@ const Shop=()=>{
                             <Card key={i} product={product}/>
                     ))} */}
                     {loading ? <h1>Loading...</h1>:filteredResults.map((product,i)=>(
-                        <Card key={i} product={product}/>
+                         <div key={i} className="col-4 mb-3">
+                         <Card  product={product}/>
+                     </div>
                     ))}
                  </div>
                  <hr/>

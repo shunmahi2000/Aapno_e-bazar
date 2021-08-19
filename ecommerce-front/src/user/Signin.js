@@ -74,7 +74,7 @@ const Signin = () => {
         }
     }
     return (
-        <Layout title = "Signin Page" description="Signin to Node React Ecommerce Website" className="container col-md-8 offset-md-2">
+        <Layout title = "Signin Page" description="Signin to AAPNO e-BAZAR" className="container col-md-8 offset-md-2">
       {showLoading()}
       {showError()}      
       {signUpForm()}

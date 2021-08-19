@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * Get unique error field name
+ * unique error field name
  */
 const uniqueMessage = error => {
     let output;
@@ -22,7 +22,7 @@ const uniqueMessage = error => {
 };
 
 /**
- * Get the erroror message from error object
+ *erroror message from error object
  */
 exports.errorHandler = error => {
     let message = "";
