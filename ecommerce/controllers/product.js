@@ -1,29 +1,29 @@
 
 const formidable = require("formidable")
-const _=require("lodash");
+const _ = require("lodash");
 const fs = require("fs");
 const Product = require("../models/product");
 const { errorHandler } = require("../helpers/dbErrorHandlers");
 const product = require("../models/product");
-const {listSearch}= require("../controllers/product");
+const { listSearch } = require("../controllers/product");
 
-exports.productById = (req,res,next,id)=>{
+exports.productById = (req, res, next, id) => {
     Product.findById(id)
-    .populate("category")
-    .exec((err,product)=>{
-       if(err || !product){
-        return res.status(400).json({
-            error: "product not found"
+        .populate("category")
+        .exec((err, product) => {
+            if (err || !product) {
+                return res.status(400).json({
+                    error: "product not found"
+                });
+            }
+            req.product = product;
+            next();
         });
-       }
-       req.product=product;
-       next();
-    });
 };
 
 
 
-exports.read= (req,res)=>{
+exports.read = (req, res) => {
     req.product.photo = undefined
     return res.json(req.product);
 }
@@ -31,28 +31,28 @@ exports.read= (req,res)=>{
 
 
 
-exports.create = (req,res) =>{
+exports.create = (req, res) => {
     let form = new formidable.IncomingForm()
     form.keepExtensions = true
-    form.parse(req, (err,fields,files)=>{
-        if(err){
+    form.parse(req, (err, fields, files) => {
+        if (err) {
             return res.status(400).json({
                 error: "Image could not be uploaded"
             })
         }
 
         //check for all fields
-        const{name,description,price,category,quantity,shipping}= fields;
-        if(!name || !description || !price || !category || !quantity || !shipping){
+        const { name, description, price, category, quantity, shipping } = fields;
+        if (!name || !description || !price || !category || !quantity || !shipping) {
             return res.status(400).json({
-                error:"All fields are required"
+                error: "All fields are required"
             })
         }
         let product = new Product(fields)
         //1jb=1024 b
         //1mb=1000000
-        if(files.photo){
-            if(files.photo.size>1000000){
+        if (files.photo) {
+            if (files.photo.size > 1000000) {
                 return res.status(400).json({
                     error: "Image should be less than 1 mb"
                 })
@@ -61,8 +61,8 @@ exports.create = (req,res) =>{
             product.photo.data = fs.readFileSync(files.photo.path)
             product.photo.contentType = files.photo.type
         }
-        product.save((err,result)=>{
-            if(err){
+        product.save((err, result) => {
+            if (err) {
                 return res.status(400).json({
                     error: errorHandler(err)
                 });
@@ -77,10 +77,10 @@ exports.create = (req,res) =>{
 
 
 
-exports.remove=(req,res)=>{
+exports.remove = (req, res) => {
     let product = req.product
-    product.remove((err,deletedProduct)=>{
-        if(err){
+    product.remove((err, deletedProduct) => {
+        if (err) {
             return res.status(400).json({
                 error: errorHandler(err)
             });
@@ -94,29 +94,29 @@ exports.remove=(req,res)=>{
 
 
 
-exports.update = (req,res) =>{
+exports.update = (req, res) => {
     let form = new formidable.IncomingForm()
     form.keepExtensions = true
-    form.parse(req, (err,fields,files)=>{
-        if(err){
+    form.parse(req, (err, fields, files) => {
+        if (err) {
             return res.status(400).json({
                 error: "Image could not be uploaded"
             })
         }
 
         //check for all fields
-        const{name,description,price,category,quantity,shipping}= fields;
-        if(!name || !description || !price || !category || !quantity || !shipping){
+        const { name, description, price, category, quantity, shipping } = fields;
+        if (!name || !description || !price || !category || !quantity || !shipping) {
             return res.status(400).json({
-                error:"All fields are required"
+                error: "All fields are required"
             })
         }
-       let product = req.product
-        product = _.extend(product,fields)
+        let product = req.product
+        product = _.extend(product, fields)
         //1jb=1024 b
         //1mb=1000000
-        if(files.photo){
-            if(files.photo.size>1000000){
+        if (files.photo) {
+            if (files.photo.size > 1000000) {
                 return res.status(400).json({
                     error: "Image should be less than 1 mb"
                 })
@@ -125,8 +125,8 @@ exports.update = (req,res) =>{
             product.photo.data = fs.readFileSync(files.photo.path)
             product.photo.contentType = files.photo.type
         }
-        product.save((err,result)=>{
-            if(err){
+        product.save((err, result) => {
+            if (err) {
                 return res.status(400).json({
                     error: errorHandler(err)
                 });
@@ -146,50 +146,50 @@ exports.update = (req,res) =>{
 
 
 
-exports.list = (req,res)=>{
+exports.list = (req, res) => {
     let order = req.query.order ? req.query.order : "asc"
     let sortBy = req.query.sortBy ? req.query.sortBy : "_id"
     let limit = req.query.limit ? parseInt(req.query.limit) : 6
 
     Product.find()
-     .select("-photo")
-     .populate("category")
-     .sort([[sortBy,order]])
-     .limit(limit)
-     .exec((err,products)=>{
-         if(err){
-             return res.status(400).json({
-                 error: "Product not found"
-             })
-         }
-         res.json(products);
-     })
+        .select("-photo")
+        .populate("category")
+        .sort([[sortBy, order]])
+        .limit(limit)
+        .exec((err, products) => {
+            if (err) {
+                return res.status(400).json({
+                    error: "Product not found"
+                })
+            }
+            res.json(products);
+        })
 }
 
 //it will find the product based on the request category
 //other products that has the same category wiill be returned
 
 
-exports.listRelated = (req,res)=>{
+exports.listRelated = (req, res) => {
     let limit = req.query.limit ? parseInt(req.query.limit) : 6
 
-    Product.find({_id:{$ne: req.product},category: req.product.category})
-    .limit(limit)
-    .populate("category",'id_name')
-    .exec((err,products)=>{
-        if(err){
-            return res.status(400).json({
-                error: "Product not found"
-            })
-        }
-        res.json(products);
-    })
+    Product.find({ _id: { $ne: req.product }, category: req.product.category })
+        .limit(limit)
+        .populate("category", 'id_name')
+        .exec((err, products) => {
+            if (err) {
+                return res.status(400).json({
+                    error: "Product not found"
+                })
+            }
+            res.json(products);
+        })
 }
 
 
-exports.listCategories = (req,res)=>{
-    Product.distinct("category",{},(err,categories)=>{
-        if(err){
+exports.listCategories = (req, res) => {
+    Product.distinct("category", {}, (err, categories) => {
+        if (err) {
             return res.status(400).json({
                 error: "Categories not found"
             })
@@ -253,29 +253,29 @@ exports.listBySearch = (req, res) => {
 };
 
 
-exports.photo = (req,res,next)=>{
-       if(req.product.photo.data){
-           res.set("Conten-Type",req.product.photo.contentType)
-           return res.send(req.product.photo.data)
-       }
-       next();
+exports.photo = (req, res, next) => {
+    if (req.product.photo.data) {
+        res.set("Conten-Type", req.product.photo.contentType)
+        return res.send(req.product.photo.data)
+    }
+    next();
 }
 
 
-exports.listSearch=(req,res)=>{
-    const query={}
-    if(req.query.search){
-    query.name ={$regex: req.query.search,$options: "i"}
-    if(req.query.category && req.query.category !="All"){
-        query.category=req.query.category
-    }
-    Product.find(query,(err,products)=>{
-        if(err){
-            return res.status(400).json({
-                error: errorHandler(err)
-            })
+exports.listSearch = (req, res) => {
+    const query = {}
+    if (req.query.search) {
+        query.name = { $regex: req.query.search, $options: "i" }
+        if (req.query.category && req.query.category != "All") {
+            query.category = req.query.category
         }
-        res.json(products)
-    }).select("-photo")
+        Product.find(query, (err, products) => {
+            if (err) {
+                return res.status(400).json({
+                    error: errorHandler(err)
+                })
+            }
+            res.json(products)
+        }).select("-photo")
     }
 }

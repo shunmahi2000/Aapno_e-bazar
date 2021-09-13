@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "build": "cd ecommerce-front && npm start",
+    "install-ecommerce-front": "cd ecommerce-front && npm install",
+    "heroku-postbuild": "npm run install-ecommerce-front && npm run ecommerce-front",
+    "ecommerce-front": "cd ecommerce-front && npm start"
   },
   "keywords": [],
   "author": "",
