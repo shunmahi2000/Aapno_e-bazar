@@ -23,7 +23,7 @@ const app = express();
 //db
 const db = "mongodb + srv://root:3030@ecommerce.yhm8e.mongodb.net/ecommerce?retryWrites=true&w=majority";
 mongoose
-  .connect(process.env.DATABASE || db, {
+  .connect(process.env.DATABASE, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
