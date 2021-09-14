@@ -3,11 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon app.js",
-    "build": "cd ecommerce-front && npm start",
-    "install-ecommerce-front": "cd ecommerce-front && npm install",
-    "heroku-postbuild": "npm run install-ecommerce-front && npm run ecommerce-front",
-    "ecommerce-front": "cd ecommerce-front && npm start"
+    "start": "node app.js",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix ecommerce-front && npm run build --prefix ecommerce-front"
+
   },
   "keywords": [],
   "author": "",

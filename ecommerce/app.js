@@ -51,7 +51,7 @@ const port = process.env.PORT || 8000;
 
 //step 3
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static('ecommerce-front'))
+  app.use(express.static('ecommerce-front/build'))
 }
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
