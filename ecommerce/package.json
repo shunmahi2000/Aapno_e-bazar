@@ -5,7 +5,6 @@
   "scripts": {
     "start": "node app.js",
     "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix ecommerce-front && npm run build --prefix ecommerce-front"
-
   },
   "keywords": [],
   "author": "",
